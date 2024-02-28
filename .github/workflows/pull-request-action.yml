@@ -1,0 +1,37 @@
+name: File-Thing PR CI
+on:
+  pull_request:
+    branches:
+      - "main"
+
+env:
+  CONAN_USER: automation
+  CONAN_PASS: ${{ secrets.CONAN_PASS }}
+  VERSION: 0.1
+
+jobs:
+  run_unit_tests:
+    name: Build and run ft unit tests
+    runs-on: self-hosted
+    container:
+      image: ubuntu:22.04
+      ports:
+        - 8082
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          apt update
+          apt install -y build-essential cmake python3 python3-pip
+      - name: Get Conan
+        uses: turtlebrowser/get-conan@v1.2
+      - name: Build and run unit tests
+        run: |
+          conan profile detect -f
+          ./builder.sh unit_test
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "build/Release/test_detail.xml"
+          show: "all"
+        if: always()

@@ -1,0 +1,49 @@
+name: File-Thing On Merge CI
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  CONAN_USER: automation
+  CONAN_PASS: ${{ secrets.CONAN_PASS }}
+  VERSION: 0.1
+
+jobs:
+  build_and_pkg:
+    name: Build and package ft
+    runs-on: self-hosted
+    container:
+      image: ubuntu:22.04
+      ports:
+        - 8082
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          apt update
+          apt install -y build-essential cmake python3 python3-pip dh-make devscripts lintian
+      - name: Get Conan
+        uses: turtlebrowser/get-conan@v1.2
+      - name: Set up local Conan repo
+        run: |
+          conan profile detect -f
+          conan remote add --force conan-local http://172.17.0.1:8082/artifactory/api/conan/conan-local
+          conan remote login conan-local "$CONAN_USER" -p "$CONAN_PASS"
+      - name: Upload ft Conan package to Artifactory
+        run: |
+          ./builder.sh upload
+      - name: Build release Debian package
+        env:
+          DEBEMAIL: "jason@example.com"
+          DEBFULLNAME: "Jason Anderson"
+        run: |
+          ./builder.sh
+          ./package.sh
+      - name: Upload To Github Release
+        uses: xresloader/upload-to-github-release@v1.5.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: "*.deb"
+          overwrite: true
