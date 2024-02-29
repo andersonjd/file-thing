@@ -1,5 +1,15 @@
 #!/bin/bash
 
+
+###############################################################################
+#  package.sh
+#
+#  Pre-req: ./Builder.sh with no args is expected to be called before this script  
+#
+#  Calling this script creates a debian package from the conan build output
+#
+###############################################################################
+
 pkg_name='ft'
 pkg_ver="${VERSION}"
 

@@ -15,7 +15,7 @@ namespace
 
         // Check file exists and no error code
         ASSERT_TRUE(fs::exists(testFilePath));
-        ASSERT_EQ(code, 0);
+        ASSERT_EQ(code, true);
 
         // Read the file and check if the content matches
         std::ifstream file(testFilePath);
@@ -30,7 +30,7 @@ namespace
 
         // Check file exists and no error code
         ASSERT_TRUE(fs::exists(testFilePath));
-        ASSERT_EQ(code, 0);
+        ASSERT_EQ(code, true);
 
         // Check if file is empty
         std::ifstream file(testFilePath);
@@ -45,14 +45,14 @@ namespace
 
         // Expect error message because directory does not exist
         int code = createFileWithText(invalidDestinationPath, "Hello, world!");
-        ASSERT_EQ(code, 1);
+        ASSERT_EQ(code, false);
         ASSERT_FALSE(fs::exists(invalidDestinationPath));
     }
 
     // Copy tests
     TEST_F(CopyTestHarness, CopyFileSuccess)
     {
-        ASSERT_EQ(copyFile(testSourceFilePath, testDestinationFilePath), 0);
+        ASSERT_EQ(copyFile(testSourceFilePath, testDestinationFilePath), true);
 
         // Check if destination file exists
         ASSERT_TRUE(fs::exists(testDestinationFilePath));
@@ -68,7 +68,7 @@ namespace
     TEST_F(CopyTestHarness, CopyNonExistentFile)
     {
         std::string nonExistentFilePath = "non_existent_file.txt";
-        ASSERT_EQ(copyFile(nonExistentFilePath, testDestinationFilePath), 1);
+        ASSERT_EQ(copyFile(nonExistentFilePath, testDestinationFilePath), false);
 
         // Check if destination file does not exist
         ASSERT_FALSE(fs::exists(testDestinationFilePath));
@@ -78,7 +78,7 @@ namespace
     {
         std::string invalidDirectoryPath = "invalid_directory";
         std::string invalidDestinationPath = invalidDirectoryPath + "/test_destination_file.txt";
-        ASSERT_EQ(copyFile(testSourceFilePath, invalidDestinationPath), 1);
+        ASSERT_EQ(copyFile(testSourceFilePath, invalidDestinationPath), false);
 
         // Check if destination file does not exist
         ASSERT_FALSE(fs::exists(invalidDestinationPath));
@@ -87,7 +87,7 @@ namespace
     // Combine files tests
     TEST_F(CombineFileHarness, CombineFilesSuccess)
     {
-        ASSERT_EQ(combineFiles(sourcePath1, sourcePath2, destinationPath), 0);
+        ASSERT_EQ(combineFiles(sourcePath1, sourcePath2, destinationPath), true);
 
         // Check if destination file exists
         ASSERT_TRUE(fs::exists(destinationPath));
@@ -105,7 +105,7 @@ namespace
     TEST_F(CombineFileHarness, CombineFilesNonExistentSource)
     {
         std::string nonExistentFilePath = "non_existent_file.txt";
-        ASSERT_EQ(combineFiles(nonExistentFilePath, sourcePath2, destinationPath), 1);
+        ASSERT_EQ(combineFiles(nonExistentFilePath, sourcePath2, destinationPath), false);
         ASSERT_FALSE(fs::exists(destinationPath));
     }
 
@@ -113,14 +113,14 @@ namespace
     {
         std::string invalidDirectoryPath = "invalid_directory2";
         std::string invalidDestinationPath = invalidDirectoryPath + "/combined_file.txt";
-        ASSERT_EQ(combineFiles(sourcePath1, sourcePath2, invalidDestinationPath), 1);
+        ASSERT_EQ(combineFiles(sourcePath1, sourcePath2, invalidDestinationPath), false);
         ASSERT_FALSE(fs::exists(invalidDestinationPath));
     }
 
     // Delete tests
     TEST_F(DeleteFileHarness, DeleteExistingFile)
     {
-        ASSERT_EQ(deleteFile(filePath), 0);
+        ASSERT_EQ(deleteFile(filePath), true);
 
         ASSERT_FALSE(fs::exists(filePath));
     }
@@ -128,7 +128,7 @@ namespace
     TEST_F(DeleteFileHarness, DeleteNonExistentFile)
     {
         std::string nonExistentFilePath = "non_existent_file.txt";
-        ASSERT_EQ(deleteFile(nonExistentFilePath), 1);
+        ASSERT_EQ(deleteFile(nonExistentFilePath), false);
     }
 
 }
