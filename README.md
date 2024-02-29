@@ -24,7 +24,7 @@ $ sudo dpkg -i ft_0.3-1_amd64.deb
 
 ## Usage 
 
-File Thing uses a subcommand style interface similar to git. The follow commands are available:
+File Thing uses a subcommand style interface similar to git. The following commands are available:
 - [Create](#create)  
 - [Copy](#copy)  
 - [Combine](#combine)  
