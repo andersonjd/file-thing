@@ -14,7 +14,7 @@ void setupCommands(CLI::App &app)
 
     // Set the run function as callback to be called when this subcommand is issued.
     createCommand->callback([createOpts]()
-                            { runCreate(*createOpts); });
+                            { return runCreate(*createOpts); });
 
     // Copy
     auto copyOpts = std::make_shared<CopyOpts>();
@@ -24,7 +24,7 @@ void setupCommands(CLI::App &app)
     copyCommand->add_option("-d, --dest", copyOpts->dest_file, "Destination file")->required();
 
     copyCommand->callback([copyOpts]()
-                          { runCopy(*copyOpts); });
+                          { return runCopy(*copyOpts); });
 
     // Combine
     auto combineOpts = std::make_shared<CombineOpts>();
@@ -35,7 +35,7 @@ void setupCommands(CLI::App &app)
     combineCommand->add_option("-d, --dest", combineOpts->dest_file, "Destination")->required();
 
     combineCommand->callback([combineOpts]()
-                             { runCombine(*combineOpts); });
+                             { return runCombine(*combineOpts); });
 
     // Delete
     auto delOpts = std::make_shared<DeleteOpts>();
@@ -44,10 +44,10 @@ void setupCommands(CLI::App &app)
     delCommand->add_option("-f, --file", delOpts->file, "File to delete")->required();
 
     delCommand->callback([delOpts]()
-                         { runDelete(*delOpts); });
+                         { return runDelete(*delOpts); });
 }
 
-void runCreate(CreateOpts const &opt)
+bool runCreate(CreateOpts const &opt)
 {
     std::cout << "Create called with: " << std::endl;
     std::cout << '\t' << opt.file << std::endl;
@@ -55,20 +55,20 @@ void runCreate(CreateOpts const &opt)
               << '\t' << opt.text << std::endl
               << std::endl;
 
-    auto errorCode = createFileWithText(opt.file, opt.text);
+    return createFileWithText(opt.file, opt.text);
 }
 
-void runCopy(CopyOpts const &opt)
+bool runCopy(CopyOpts const &opt)
 {
     std::cout << "Copy called with: " << std::endl;
     std::cout << "\t Source: " << opt.source_file << std::endl;
     std::cout << "\t Dest: " << opt.dest_file << std::endl
               << std::endl;
 
-    auto errorCode = copyFile(opt.source_file, opt.dest_file);
+    return copyFile(opt.source_file, opt.dest_file);
 }
 
-void runCombine(CombineOpts const &opt)
+bool runCombine(CombineOpts const &opt)
 {
     std::cout << "Combine called with: " << std::endl;
     std::cout << "\t File 1: " << opt.source_file1 << std::endl;
@@ -76,14 +76,14 @@ void runCombine(CombineOpts const &opt)
     std::cout << "\t Dest: " << opt.dest_file << std::endl
               << std::endl;
 
-    auto errorCode = combineFiles(opt.source_file1, opt.source_file2, opt.dest_file);
+    return combineFiles(opt.source_file1, opt.source_file2, opt.dest_file);
 }
 
-void runDelete(DeleteOpts const &opt)
+bool runDelete(DeleteOpts const &opt)
 {
     std::cout << "Delete called with: " << std::endl;
     std::cout << "\t File: " << opt.file << std::endl
               << std::endl;
 
-    auto errorCode = deleteFile(opt.file);
+   return deleteFile(opt.file);
 }
