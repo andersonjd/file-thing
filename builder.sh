@@ -10,12 +10,11 @@
 #    unit_test - Builds and runs the ft unit tests
 #    upload    - Builds and upload the ft conan package
 ###############################################################################
-skip_unit_tests='True'
 
-build_type='Release'
+# Default vars
+skip_unit_tests='True'
 build_dir='build'
 
-output_path="${build_dir}/${build_type}"
 pkg_name='ft'
 pkg_ver="${VERSION}"
 
@@ -38,8 +37,9 @@ if [ "$1" == "unit_test" ]; then
 fi
 
 clean
-build
 
 if [ "$1" == "upload" ]; then
     upload
+else
+    build
 fi
